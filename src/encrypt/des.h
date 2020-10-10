@@ -141,6 +141,7 @@ typedef struct
 	bool Is3DES;
 } SecretKey;
 
+/** get secret key */
 SecretKey *GetSecretKey(const char *pKey, int nLen, bool is3Des);
 int DesEncrypt(SecretKey *secretKey, const char *srcBuf, int srcLen, char *dstBuf, int dstMaxLen, PaddingType padType);
 int DesDecrypt(SecretKey *secretKey, const char *srcBuf, int srcLen, char *dstBuf, int dstMaxLen, PaddingType padType);

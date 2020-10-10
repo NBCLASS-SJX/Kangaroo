@@ -212,6 +212,7 @@ unsigned int DESDecode(SecretKey *secretKey, const char * pBuf, unsigned int nLe
 	return dstLen;
 }
 
+/**  */
 SecretKey *GetSecretKey(const char *pKey, int nLen, bool is3Des)
 {
 	SecretKey *secretKey = new SecretKey();

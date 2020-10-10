@@ -23,7 +23,8 @@
 typedef struct {
 	unsigned long long p;
 	unsigned long long q;
-	unsigned long long f;		//f=(p-1)*(q-1)
+	/** f=(p-1)*(q-1) */
+	unsigned long long f;
 	unsigned long long n;
 	unsigned long long PriKey;
 	unsigned long long PubKey;
