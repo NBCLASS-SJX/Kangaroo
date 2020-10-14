@@ -1,7 +1,7 @@
 // =====================================================================================
 //	Copyright (C) 2019 by Jiaxing Shao.All rights reserved.
 //
-//	文 件 名:  kgr_logger.h
+//	文 件 名:  logger.h
 //	作    者:  Jiaxing Shao, 13315567369@163.com
 //	版 本 号:  1.0
 //	创建时间:  2019年02月15日 15时43分21秒
@@ -12,7 +12,9 @@
 #ifndef _KGR_LOGGER_H_H_H
 #define _KGR_LOGGER_H_H_H
 
-#include "kgr_utils.h"
+#include "common.h"
+
+#include <fstream>
 
 #define MAX_LOG_QUEUE_COUNT (1024)
 #define MAX_LOG_QUEUE_SIZE 	(1024 * 16)
@@ -23,6 +25,13 @@
 #define PUT_CONSUMER(row) (row)->consumer = ((row)->consumer + 1) % (row)->size
 #define GET_PRODUCER(row) (((row)->producer + 1) % (row)->size != (row)->consumer) ? &(row)->items[(row)->producer] : NULL
 #define PUT_PRODUCER(row) (row)->producer = ((row)->producer + 1) % (row)->size
+
+
+#if defined(__GNUC__)
+#define logger_format_string()
+
+#define log_debug()
+
 
 #if defined(__GNUC__)
 #define log_debug(format, args...) do { std::string log_debug_time = GetSystemTime();\
@@ -44,13 +53,18 @@
 	if(logger_record(logger, "%s [error]: " format "\n", log_time_str.c_str(), ##__VA_ARGS__)) break; }while(true)
 #endif
 
-typedef struct
-{
+typedef enum {
+	LOG_LEVEL_DEBUG = 1,
+	LOG_LEVEL_INFO = 2,
+	LOG_LEVEL_WARN = 3,
+	LOG_LEVEL_TYPE_ERROR = 4
+}log_level_e;
+
+typedef struct {
 	char buf[MAX_LOG_LINE_LENGTH];
 } log_t;
 
-typedef struct
-{
+typedef struct {
 	std::fstream file;
 	int size;
 	int producer;

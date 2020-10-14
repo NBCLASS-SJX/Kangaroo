@@ -18,7 +18,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 	std::string kafka_brokers = GetConfigureString("kafka.brokers", "192.168.23.100:9092");
-	std::string kafka_topic = GetConfigureString("kafka.topic", "test");
+	std::string kafka_topic = GetConfigureString("kafka.topic", "scats");
 
 	ProducerKafka *kafka_producer = new ProducerKafka();
 	if (PRODUCER_INIT_SUCCESS == kafka_producer->init_kafka(0, kafka_brokers.c_str(), kafka_topic.c_str())) {

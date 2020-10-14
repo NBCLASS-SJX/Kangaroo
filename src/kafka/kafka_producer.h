@@ -22,7 +22,7 @@
 #include <sys/time.h>
 #include <errno.h>
  
-#include "../common/kgr_logger.h"
+#include "../common/logger.h"
 #include <librdkafka/rdkafka.h>
  
 const int PRODUCER_INIT_FAILED = -1;

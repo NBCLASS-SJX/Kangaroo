@@ -48,9 +48,9 @@ std::string get_current_time()
 std::string get_config_string(const char *value_name, const char *default_value)
 {
 #if defined(HAVE_UNISTD_H)
-	const char filename[] = "./Configure.ini";
+	const char filename[] = "./application.conf";
 #elif defined(HAVE_WINDOWS_H)
-	const char filename[] = ".\\Configure.ini";
+	const char filename[] = ".\\application.conf";
 #endif
 	get_config_string(value_name, default_value, filename);
 }

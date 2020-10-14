@@ -3,9 +3,9 @@ library_dir = -L /usr/lib/oracle/11.2/client64/lib -L /usr/local/lib
 include_dir = -I /usr/include/oracle/11.2/client64/ -I /usr/local/include
 c_flags = -std=c++11 -g
 libs = -lpthread -lnnz11 -lociei -lclntsh -lthrift -lrdkafka
-objs = kgr_utils.o \
+objs = common.o \
 	   kgr_bytes.o \
-	   kgr_logger.o \
+	   logger.o \
 	   base64.o \
 	   md5.o \
 	   des.o \
@@ -38,11 +38,11 @@ $(exe):$(objs) $(test_objs)
 	$(cc) xmlcodec_test.o $(objs) $(c_flags) -o test/xmlcodec_test $(libs) $(include_dir) $(library_dir)
 	$(cc) kafka_test.o $(objs) $(c_flags) -o test/kafka_test $(libs) $(include_dir) $(library_dir)
 
-kgr_utils.o: src/common/kgr_utils.h src/common/kgr_utils.cpp
-	$(cc) -c $(c_flags) src/common/kgr_utils.cpp
-kgr_logger.o: src/common/kgr_logger.h src/common/kgr_logger.cpp
-	$(cc) -c $(c_flags) src/common/kgr_logger.cpp
-kgr_bytes.o: src/common/kgr_bytes.h src/common/kgr_bytes.cpp 
+common.o:
+	$(cc) -c $(c_flags) src/common/common.cpp
+logger.o:
+	$(cc) -c $(c_flags) src/common/logger.cpp
+kgr_bytes.o:
 	$(cc) -c $(c_flags) src/common/kgr_bytes.cpp
 
 base64.o: src/encrypt/base64.h src/encrypt/base64.cpp

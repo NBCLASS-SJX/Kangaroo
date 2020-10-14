@@ -10,6 +10,10 @@
 // =====================================================================================
 
 #include "otldb.h"
+
+#include <mutex>
+#include <condition_variable>
+
 static bool isInitialize = false;
 
 OtlControl::OtlControl()
