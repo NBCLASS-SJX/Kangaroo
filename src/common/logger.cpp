@@ -168,7 +168,7 @@ void logger_queue_free(log_queue_t *&logger)
 	logger = NULL;
 }
 
-bool logger_record(log_queue_t *logger, const char *format, ...)
+bool logger_record(log_queue_t *logger, , const char *format, ...)
 {
 	log_t *log = GET_PRODUCER(logger);
 	if(log == NULL) {

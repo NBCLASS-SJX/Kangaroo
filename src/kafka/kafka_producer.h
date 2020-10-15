@@ -33,15 +33,12 @@ const int PUSH_DATA_SUCCESS = 0;
 class ProducerKafka
 {
 public:
-	ProducerKafka();
-	~ProducerKafka();
-
-	int init_kafka(int partition, const char *brokers, const char *topic);
-	int push_data_to_kafka(const char *pBuf, const int nLen);
-	void destroy();
-protected:
-	static log_queue_t *logger;
-	static void log_callback(const rd_kafka_t *rk, int level,const char *fac, const char *buf);
+	ProducerKafka(){};
+	~ProducerKafka(){};
+public:
+	int ProducerInit(int partition, const char *brokers, const char *topic);
+	int PushDataToKafka(const char *buf, const int len);
+	void ProducerDestroy();
 private:
 	int partition_;
 	rd_kafka_t *handler_;

@@ -13,20 +13,11 @@
 
 log_queue_t *ProducerKafka::logger = NULL;
 
-ProducerKafka::ProducerKafka()
+int ProducerKafka::ProducerInit(int partition, const char *brokers, const char *topic)
 {
-}
-
-ProducerKafka::~ProducerKafka()
-{
-}
-
-
-int ProducerKafka::init_kafka(int partition, const char *brokers, const char *topic)
-{
-	logger = logger_queue_create("kafka");
 	char tmp[16] = { 0 };
 	char errstr[512] = { 0 };
+
 	partition_ = partition;
 	conf_ = rd_kafka_conf_new();
 	rd_kafka_conf_set_log_cb(conf_, log_callback);
@@ -48,6 +39,27 @@ int ProducerKafka::init_kafka(int partition, const char *brokers, const char *to
 
 	topic_ = rd_kafka_topic_new(handler_, topic, topic_conf_);
 	return PRODUCER_INIT_SUCCESS;
+}
+
+int ProducerKafka::PushDataToKafka(const char *buf, const int len)
+{
+	if(pBuf == NULL) return PUSH_DATA_FAILED;
+
+	char errstr[512] = { 0 };
+	int ret = rd_kafka_produce(topic_, partition_, RD_KAFKA_MSG_F_COPY, (void*)pBuf, (size_t)nLen, NULL, 0, NULL);
+	if(ret == -1){
+		sprintf("****Failed to produce to topic %s partition %i: %s*****", rd_kafka_topic_name(topic_), partition_, 
+				rd_kafka_err2str(rd_kafka_errno2err(errno)));
+		rd_kafka_poll(handler_, 0);
+		return PUSH_DATA_FAILED;
+	}
+	log_info(logger, "***Sent %d bytes to topic:%s partition:%i*****\n", nLen, rd_kafka_topic_name(topic_), partition_);
+	rd_kafka_poll(handler_, 0);
+	return PUSH_DATA_SUCCESS;
+}
+
+void ProducerKafka::ProducerDestroy()
+{
 }
 
 int ProducerKafka::push_data_to_kafka(const char *pBuf, const int nLen)

@@ -30,7 +30,11 @@
 #if defined(__GNUC__)
 #define logger_format_string()
 
-#define log_debug()
+#define log_record(logger, format, args...) do{ if(std::string log_format_time = get_current_time();\
+		if(logger_record(lo))
+		} while(0)
+
+#endif
 
 
 #if defined(__GNUC__)
@@ -43,6 +47,10 @@
 #define log_error(logger, format, args...) do{ if(logger == NULL) break; std::string log_time_str = GetSystemTime(); \
 	if(logger_record(logger, "%s [error]: " format "\n", log_time_str.c_str(), ##args)) break; } while(true)
 #elif defined(_MSC_VER)
+
+
+
+
 #define log_debug(format, ...) do { std::string log_debug_time = GetSystemTime();\
 	printf("%s [debug]: " format "\n", log_debug_time.c_str(), ##__VA_ARGS__);} while(0)
 #define log_info(logger, format, ...) do{ if(logger == NULL) break; std::string log_time_str = GetSystemTime(); \
