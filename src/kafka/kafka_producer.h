@@ -22,7 +22,6 @@
 #include <sys/time.h>
 #include <errno.h>
  
-#include "../common/logger.h"
 #include <librdkafka/rdkafka.h>
  
 const int PRODUCER_INIT_FAILED = -1;
@@ -36,9 +35,10 @@ public:
 	ProducerKafka(){};
 	~ProducerKafka(){};
 public:
-	int ProducerInit(int partition, const char *brokers, const char *topic);
-	int PushDataToKafka(const char *buf, const int len);
-	void ProducerDestroy();
+	int producerInit(int partition, const char *brokers, const char *topic);
+	int pushDataToKafka(const char *buf, const int len);
+	void producerDestroy();
+	static void log_callback(const rd_kafka_t *rk, int level,const char *fac, const char *buf); 
 private:
 	int partition_;
 	rd_kafka_t *handler_;
