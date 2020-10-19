@@ -1,7 +1,7 @@
 // =====================================================================================
 //	Copyright (C) 2018 by Jiaxing Shao.All rights reserved.
 //
-//	文 件 名:  kgr_bytes.h
+//	文 件 名:  bytearray.h
 //	作    者:  Jiaxing Shao, 13315567369@163.com
 //	版 本 号:  1.0
 //	创建时间:  2018年06月08日 14时10分10秒
@@ -18,14 +18,29 @@
 #include <cstring>
 #include <string>
 
-typedef struct
+class ByteArray
 {
+public:
+	ByteArray() {};
+	~ByteArray() {};
+
+private:
 	unsigned char *buffer;
 	int size;
 	int total;
 	int head;
 	int tail;
-}KgrByteArray;
+};
+
+
+
+typedef struct {
+	unsigned char *buffer;
+	int size;
+	int total;
+	int head;
+	int tail;
+}byte_array_t;
 
 KgrByteArray *Kgr_ByteArrayCreate(int size = KGR_BYTES_ARRAY_SIZE);
 void Kgr_ByteArrayFree(KgrByteArray* &byte_array);

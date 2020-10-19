@@ -10,8 +10,8 @@
 // =====================================================================================
 
 #include "common.h"
-#include "time.h"
 #include <stdio.h>
+#include <time.h>
 #include <stdarg.h>
 #include <iostream>
 #include <fstream>
@@ -19,12 +19,24 @@
 #include <cstring>
 #include <iomanip>
 
-
 #if defined(HAVE_UNISTD_H)
+	#include <unistd.h>
+
 	const static char config_filename[] = "./application.conf";
 #elif defined(HAVE_WINDOWS_H)
+	#include <windows.h>
+
 	const static char config_filename[] = ".\\application.conf";
 #endif
+
+void msleep(uint8_t msec)
+{
+#if defined(HAVE_UNISTD_H)
+	usleep(msec*1000);
+#elif defined(HAVE_WINDOWS_H)
+	Sleep(msec);
+#endif
+}
 
 int sprintf_safe(char *dest, int size, const char *fmt, ...)
 {
@@ -51,7 +63,7 @@ std::string get_current_time()
 	return string_time;
 }
 
-std::string get_config_string(const char *value_name, const char *default_value, const char *filename)
+std::string get_config_prop_string(const char *value_name, const char *default_value, const char *filename)
 {
 	int position = 0;
 	std::string value;
@@ -80,9 +92,9 @@ std::string get_config_string(const char *value_name, const char *default_value,
 	return value;
 }
 
-std::string get_config_string(const char *value_name, const char *default_value)
+std::string get_config_prop_string(const char *value_name, const char *default_value)
 {
-	return get_config_string(value_name, default_value, config_filename);
+	return get_config_prop_string(value_name, default_value, config_filename);
 }
 
 int get_config_prop_int(const char *value_name, const char *default_value, const char *filename)
@@ -107,80 +119,56 @@ std::string get_hex_string(const char *buf, unsigned int len)
 	for(int i = 0; i < len; i++) {
 		oss << std::setw(2) << std::hex << static_cast<int> (buf[i] & 0xFF) << std::dec  << ' ';
 	}
-	std::string str = oss.str().c_str();
-	return str;
+	return oss.str();
 }
 
 std::string *get_split_strings(std::string msg, const char *separator, int &count)
 {
-}
-
-bool split_strings_free(std::string *&parts)
-{
-}
-bool string_replace(std::string &str, const char *src, const char *dst);
-void string_trim(std::string &str, const char ch);
-std::string string_find(const char *src, const char *head, const char *tail);
-
-
-
-void string_trim(std::string &str, const char ch)
-{
-	while(str.length() > 0) {
-		if(str[0] == ch) {
-			str.erase(0, 1);
-		} else {
-			break;
-		}
-	}
-	
-	while(str.length() > 0) {
-		if(str[str.length() - 1] == ch) {
-			str.erase(str.length()-1,str.length());
-		} else {
-			break;
-		}
-	}
-}
-
-std::string *GetSplitStrings(std::string msg, std::string separator, int &count)
-{
-	std::list<std::string> list_str;
-	int pos = 0;
+	std::list<std::string> string_list;
+	int position = 0;
 	count = 0;
-	while(true)
-	{
-		int n = msg.find(separator, pos);
-		std::string str = msg.substr(pos, n - pos);
-		if(str != "") {
-			list_str.push_back(str);
-			count += 1;
+	while(true) {
+		int n = msg.find(separator, position);
+		std::string tmp_string = msg.substr(position, n - position);
+		if(tmp_string.length() != 0) {
+			string_list.push_back(tmp_string); count += 1;
 		}
-		if(n == -1)
-			break;
+		if(n == -1) break;
 		pos = n + separator.length();
 	}
-	std::string *strs = new std::string[count];
+	std::string *strings = new std::string[count];
 	std::list<std::string>::iterator iter;
 	int i = 0;
-	for(iter = list_str.begin(); iter != list_str.end(); iter++) {
-		strs[i++] = (*iter);
+	for(iter = string_list.begin(); iter != string_list.end(); iter++) {
+		strings[i++] = (*iter);
 	}
-	return strs;
+	return strings;
 }
 
-void FreeSplitStrings(std::string *&parts)
+void split_strings_free(std::string *&strings)
 {
-	if(parts == NULL) {
-		delete [] parts;
-		parts = NULL;
+	if(strings == nullptr) {
+		delete [] strings; strings = nullptr;
 	}
 }
 
-void StringReplace(std::string &str, const char *src, const char *dst)
+void string_trim(std::string &msg, const char ch)
 {
-	while(str.find(src) != -1) {
-		str.replace(str.find(src), strlen(src), dst);
+	while(msg.length() > 0) {
+		if(msg[0] != ch) break;
+		msg.erase(0, 1);
+	}
+	
+	while(msg.length() > 0) {
+		if(msg[msg.length() - 1] != ch) break;
+		msg.erase(msg.length()-1, msg.length());
+	}
+}
+
+void string_replace(std::string &msg, const char *src, const char *dst)
+{
+	while(msg.find(src) != -1) {
+		msg.replace(msg.find(src), strlen(src), dst);
 	}
 }
 

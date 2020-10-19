@@ -1,19 +1,17 @@
 // =====================================================================================
 //  Copyright (C) 2020 by Jiaxing Shao. All rights reserved
-//
-//  æ–‡ ä»¶ å:  time.h
-//  ä½œ    è€…:  Jiaxing Shao
-//  ç‰ˆ æœ¬ å·:  1.0
-//  åˆ›å»ºæ—¶é—´:  2020å¹´08æœˆ03æ—¥
+//  ÎÄ ¼ş Ãû:  smart_ptr.h
+//  ×÷    Õß:  Jiaxing Shao
+//  °æ ±¾ ºÅ:  1.0
+//  ´´½¨Ê±¼ä:  2020Äê10ÔÂ19ÈÕ
 //  Compiler:  g++
-//  æ    è¿°:  
+//  Ãè    Êö:  
 // =====================================================================================
 
-#ifndef KG_TIME_H
-#define KG_TIME_H
+#ifndef _SMART_PTR_H_H_H
+#define _SMART_PTR_H_H_H
 
-#include "config.h"
 
-void kg_usleep(unsigned usec);
 
 #endif
+

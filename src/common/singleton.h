@@ -9,8 +9,10 @@
 //  描    述:  
 // =====================================================================================
 
-#ifndef SINGLETON_H
-#define SINGLETON_H
+#ifndef _SINGLETON_H_H_H
+#define _SINGLETON_H_H_H
+
+#include <>
 
 #include <mutex>
 
@@ -50,3 +52,4 @@ template <typename T> std::mutex Singleton<T>::mtxInstance;
 template <typename T> T *Singleton<T>::_instance = nullptr;
 
 #endif
+
