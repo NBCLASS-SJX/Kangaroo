@@ -18,10 +18,10 @@
 
 #define OTL_ORA11G_R2
 #define OTLCONTROL_CONNSTR_LEN (256)
-
-#include "../common/kgr_utils.h"
-#include "../common/kgr_logger.h"
 #include "otlv4.h"
+
+#include "../common/common.h"
+#include "../common/logger.h"
 
 class OtlControl
 {

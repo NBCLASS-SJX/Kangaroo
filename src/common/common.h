@@ -12,11 +12,18 @@
 #ifndef KG_COMMON_H
 #define KG_COMMON_H
 
+#if defined(HAVE_UNISTD_H)
+	localtime_r(&timer, &local);
+#elif defined(HAVE_WINDOWS_H)
+#endif
+
 #include "config.h"
 #include <string>
 
 int sprintf_safe(char *dest, int size, const char *fmt, ...);
+/** get current time */
 std::string get_current_time();
+/** get config prop to string */
 std::string get_config_string(const char *value_name, const char *default_valuem);
 std::string get_config_string(const char *value_name, const char *default_valuem, const char *filename);
 void string_trim(std::string &str, const char ch);

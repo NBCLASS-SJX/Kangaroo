@@ -1,7 +1,7 @@
 // =====================================================================================
 //	Copyright (C) 2019 by Jiaxing Shao.All rights reserved.
 //
-//	文 件 名:  kgr_logger.cpp
+//	文 件 名:  logger.cpp
 //	作    者:  Jiaxing Shao, 13315567369@163.com
 //	版 本 号:  1.0
 //	创建时间:  2019年02月15日 15时43分08秒
@@ -9,13 +9,23 @@
 //	描    述:  
 // =====================================================================================
 
-#include "kgr_logger.h"
+#include "logger.h"
 
-static int log_count = 0;
-static log_queue_t *log_queues[MAX_LOG_QUEUE_COUNT];
+#include <dirent.h>
+#include <stdarg.h>
+#include <sys/stat.h>
+
+#include <mutex>
+#include <thread>
+#include <cstring>
+
 static char log_root_directory[MAX_LOG_PATH_LEN];
-static std::mutex log_queue_lock;
+static log_queue_t *log_queues[MAX_LOG_QUEUE_COUNT];
+/* logger queue counter */
+static int log_queue_count = 0;
+/* log worker stop flag*/
 static bool log_stop_flag = false;
+static std::mutex log_queue_lock;
 #if defined(__GNUC__)
 static pthread_t log_thread_id;
 #elif defined(_MSC_VER)
@@ -70,7 +80,7 @@ static unsigned int __stdcall log_worker_func(void *arg)
 
 		time_t curtime = time(NULL);
 		int count = 0;
-		for(int i = 0; i < log_count; i++) {
+		for(int i = 0; i < log_queue_count; i++) {
 			log_queue_t *queue = log_queues[i];
 			log_t *log = GET_CONSUMER(queue);
 			if(log == NULL){
@@ -88,7 +98,7 @@ static unsigned int __stdcall log_worker_func(void *arg)
 			PUT_CONSUMER(queue);
 		}
 
-		if(log_count == count){
+		if(log_queue_count == count){
 			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		}
 	}
@@ -118,16 +128,16 @@ void logger_worker_thread_stop()
 #elif defined(_MSC_VER)
 	WaitForSingleObject(log_thread_id, INFINITE);
 #endif
-	for(int i = 0; i < log_count; i++){
+	for(int i = 0; i < log_queue_count; i++){
 		logger_queue_free(log_queues[i]);
 	}
-	log_count = 0;
+	log_queue_count = 0;
 }
 
 log_queue_t *logger_queue_create(const char *logName)
 {
 	std::lock_guard<std::mutex> lock(log_queue_lock);
-	if(log_count >= MAX_LOG_QUEUE_COUNT){
+	if(log_queue_count >= MAX_LOG_QUEUE_COUNT){
 		return NULL;
 	}
 	log_queue_t *logger = new log_queue_t;
@@ -144,7 +154,7 @@ log_queue_t *logger_queue_create(const char *logName)
 	time_t timer = time(NULL);
 	logger->lasttime = timer - (timer % 86400);
 	logfile_open(logger);
-	log_queues[log_count++] = logger;
+	log_queues[log_queue_count++] = logger;
 	return logger;
 }
 
@@ -158,7 +168,7 @@ void logger_queue_free(log_queue_t *&logger)
 	logger = NULL;
 }
 
-bool logger_record(log_queue_t *logger, const char *format, ...)
+bool logger_record(log_queue_t *logger, , const char *format, ...)
 {
 	log_t *log = GET_PRODUCER(logger);
 	if(log == NULL) {
