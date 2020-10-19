@@ -14,8 +14,11 @@
 
 	#if defined(__GNUC__)
 		#define HAVE_UNISTD_H
+		#define CRLF \n
 	#elif defined(_MSC_VER)
 		#define HAVE_WINDOWS_H
+		#define CRLF \r\n
 	#endif
 
 #endif
+

@@ -12,22 +12,33 @@
 #ifndef KG_COMMON_H
 #define KG_COMMON_H
 
-#if defined(HAVE_UNISTD_H)
-	localtime_r(&timer, &local);
-#elif defined(HAVE_WINDOWS_H)
-#endif
-
 #include "config.h"
 #include <string>
 
+/** safe sprintf */
 int sprintf_safe(char *dest, int size, const char *fmt, ...);
-/** get current time */
+/** get current format date */
 std::string get_current_time();
-/** get config prop to string */
-std::string get_config_string(const char *value_name, const char *default_valuem);
-std::string get_config_string(const char *value_name, const char *default_valuem, const char *filename);
-void string_trim(std::string &str, const char ch);
+/** get config properties to string */
+std::string get_config_prop_string(const char *value_name, const char *default_value, const char *filename);
+/** get config properties to string */
+std::string get_config_prop_string(const char *value_name, const char *default_value);
+/** get config properties to int */
+int get_config_prop_int(const char *value_name, const char *default_value, const char *filename);
+/** get config proprties to int */
+int get_config_prop_int(const char *value_name, const char *default_value);
+/** buffer to hex string */
 std::string get_hex_string(const char *buf, unsigned int len);
+/** string split, return string pointer */
+std::string *get_split_strings(std::string msg, const char *separator, int &count);
+/** string pointer free */
+bool split_strings_free(std::string *&parts);
+/* string replace */
+bool string_replace(std::string &str, const char *src, const char *dst);
+/** returns a string whose value is this string, with any leading and trailing whitespace removed */
+void string_trim(std::string &str, const char ch);
+/** string find */
+std::string string_find(const char *src, const char *head, const char *tail);
 
 #endif
 
