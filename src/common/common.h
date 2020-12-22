@@ -12,7 +12,6 @@
 #ifndef _COMMON_H_H_H
 #define _COMMON_H_H_H
 
-#include "config.h"
 #include <string>
 
 /** sleep millisecond */
