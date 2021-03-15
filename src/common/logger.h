@@ -11,8 +11,20 @@
 #ifndef _LOGGER_H_H_H
 #define _LOGGER_H_H_H
 
+#define LOG_NAME_LEN 512
+
 class Logger
 {
+private:
+	Logger() {};
+	Logger(const Logger &logger);
+	Logger& operator = (const Logger &logger) {};
+public:
+	~Logger() {};
+public:
+	static Logger *create();
+	void init(const char *log_name);
+	void destroy();
 public:
 	void debug();
 	void info();
@@ -21,7 +33,7 @@ public:
 private:
 	void log_record();
 private:
-	int log_counter;
+	char *filename;
 };
 
 #endif

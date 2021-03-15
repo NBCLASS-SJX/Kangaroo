@@ -9,10 +9,8 @@
 //  描    述:  
 // =====================================================================================
 
-#ifndef _SINGLETON_H_H_H
-#define _SINGLETON_H_H_H
-
-#include <>
+#ifndef _ROO_SINGLETON_H_H_H
+#define _ROO_SINGLETON_H_H_H
 
 #include <mutex>
 

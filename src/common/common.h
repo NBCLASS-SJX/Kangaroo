@@ -9,11 +9,20 @@
 //  描    述:  
 // =====================================================================================
 
-#ifndef _COMMON_H_H_H
-#define _COMMON_H_H_H
+#ifndef _ROO_COMMON_H_H_H
+#define _ROO_COMMON_H_H_H
 
 #include "config.h"
 #include <string>
+
+typedef struct {
+	unsigned short year;
+	unsigned char month;
+	unsigned char mday;
+	unsigned char hour;
+	unsigned char minute;
+	unsigned char second;
+} datetime_t;
 
 /** sleep millisecond */
 void msleep(uint8_t msec);
@@ -22,7 +31,13 @@ void msleep(uint8_t msec);
 int sprintf_safe(char *dest, int size, const char *fmt, ...);
 
 /** get current format date */
-std::string get_current_time();
+std::string get_format_time();
+
+/** get current struct time */
+datetime_t get_current_time();
+
+/** date convert to second time */
+time_t time_to_second(unsigned short year, unsigned char month, unsigned char mday, unsigned char hour, unsigned char minute, unsigned char second);
 
 /** get config properties to string */
 std::string get_config_prop_string(const char *value_name, const char *default_value, const char *filename);
@@ -48,8 +63,11 @@ void split_strings_free(std::string *&strings);
 /** returns a string whose value is this string, with any leading and trailing whitespace removed */
 void string_trim(std::string &msg, const char ch);
 
-/* string replace */
+/** string replace */
 void string_replace(std::string &msg, const char *src, const char *dst);
 
+#if defined(ROO_PLATFORM_GNUC)
+/** process run with daemon */
+void run_daemon();
 #endif
 

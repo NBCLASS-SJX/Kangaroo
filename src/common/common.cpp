@@ -19,21 +19,19 @@
 #include <cstring>
 #include <iomanip>
 
-#if defined(HAVE_UNISTD_H)
+#if defined(ROO_PLATFORM_GNUC)
 	#include <unistd.h>
-
 	const static char config_filename[] = "./application.conf";
-#elif defined(HAVE_WINDOWS_H)
+#elif defined(ROO_PLATFORM_WINDOWS)
 	#include <windows.h>
-
 	const static char config_filename[] = ".\\application.conf";
 #endif
 
 void msleep(uint8_t msec)
 {
-#if defined(HAVE_UNISTD_H)
+#if defined(ROO_PLATFORM_GNUC)
 	usleep(msec*1000);
-#elif defined(HAVE_WINDOWS_H)
+#elif defined(ROO_PLATFORM_WINDOWS)
 	Sleep(msec);
 #endif
 }
@@ -52,15 +50,41 @@ std::string get_current_time()
 	char format_time[32] = { 0 };
 	time_t timer = time(nullptr);
 	struct tm local;
-#if defined(HAVE_UNISTD_H)
+#if defined(ROO_PLATFORM_GNUC)
 	localtime_r(&timer, &local);
-#elif defined(HAVE_WINDOWS_H)
+#elif defined(ROO_PLATFORM_WINDOWS)
 	localtime_s($local, &timer);
 #endif
 	int size = sprintf_safe(format_time, 32, "%04d-%02d-%02d %02d:%02d:%02d", local.tm_year + 1900, local.tm_mon + 1, 
 						local.tm_mday, local.tm_hour, local.tm_min, local.tm_sec);
 	std::string string_time = format_time;
 	return string_time;
+}
+
+datetime_t get_current_time()
+{
+	time_t timer = time(nullptr);
+	struct tm local;
+#if defined(ROO_PLATFORM_GNUC)
+	localtime_r(&timer, &local);
+#elif defined(ROO_PLATFORM_WINDOWS)
+	localtime_s($local, &timer);
+#endif
+	datetime_t date;
+	date.year = local.tm_year + 1900;
+	date.month = local.tm_mon + 1;
+	date.mday = local.tm_mday;
+	date.hour = local.tm_hour;
+	date.minute = local.tm_min;
+	date.second = local.second;
+	return date;
+}
+
+time_t time_to_second(unsigned short year, unsigned char month, unsigned char mday, unsigned char hour, unsigned char minute, unsigned char second)
+{
+	time_t timer;
+	struct tm local;
+	return timer;
 }
 
 std::string get_config_prop_string(const char *value_name, const char *default_value, const char *filename)
@@ -172,3 +196,19 @@ void string_replace(std::string &msg, const char *src, const char *dst)
 	}
 }
 
+#if defined(ROO_PLATFORM_GNUC)
+void run_daemon()
+{
+	pid_t pid = fork();
+	if(pid < 0) {
+		exit(1);
+	} else if(pid > 0) {
+		exit(0);
+	}
+
+	setsid();
+	sig_process(SIGHUP, SIG_IGN);
+	sig_process(SIGTERM, SIG_IGN);
+	sig_process(SIGPIPE, sig_handler);
+}
+#endif
