@@ -9,11 +9,11 @@
 //	描    述:  
 // =====================================================================================
 
-#include "kgr_bytes.h"
+#include "bytearray.h"
 
-KgrByteArray *Kgr_ByteArrayCreate(int size)
+byte_array_t *byte_array_create(int size)
 {
-	KgrByteArray *byte_array = new KgrByteArray;
+    byte_array_t *byte_array = new byte_array_t;
 	byte_array->buffer = new unsigned char[size];
 	memset(byte_array->buffer, 0, size);
 	byte_array->total = size;
@@ -23,27 +23,27 @@ KgrByteArray *Kgr_ByteArrayCreate(int size)
 	return byte_array;
 }
 
-void Kgr_ByteArrayFree(KgrByteArray* &byte_array)
+void byte_array_free(byte_array_t *byte_array)
 {
-	if(byte_array == NULL)
+	if(byte_array == nullptr)
 		return;
 
-	KgrByteArray *tmp_byte_array = byte_array;
-	byte_array = NULL;
+    byte_array_t *tmp_byte_array = byte_array;
+	byte_array = nullptr;
 
-	if(tmp_byte_array != NULL) {
-		if(tmp_byte_array->buffer != NULL) {
+	if(tmp_byte_array != nullptr) {
+		if(tmp_byte_array->buffer != nullptr) {
 			delete [] tmp_byte_array->buffer;
-			tmp_byte_array->buffer = NULL;
+			tmp_byte_array->buffer = nullptr;
 		}
 		delete tmp_byte_array;
-		tmp_byte_array = NULL;
+		tmp_byte_array = nullptr;
 	}
 }
 
-bool Kgr_ByteArrayPutData(KgrByteArray *byte_array, const char *buf, int len)
+bool byte_array_push(byte_array_t *byte_array, const char *buf, int len)
 {
-	if(byte_array == NULL)
+	if(byte_array == nullptr)
 		return false;
 
 	if(byte_array->total - byte_array->size < len) {
@@ -64,9 +64,9 @@ bool Kgr_ByteArrayPutData(KgrByteArray *byte_array, const char *buf, int len)
 	return true;
 }
 
-bool Kgr_ByteArrayGetData(KgrByteArray *byte_array, char *buf, int len, bool isKeep)
+bool byte_array_pop(byte_array_t *byte_array, char *buf, int len, bool keeped)
 {
-	if(byte_array == NULL)
+	if(byte_array == nullptr)
 		return false;
 
 	if(byte_array->size < len) {
@@ -75,7 +75,7 @@ bool Kgr_ByteArrayGetData(KgrByteArray *byte_array, char *buf, int len, bool isK
 		
 	if(byte_array->total - byte_array->head >= len) {
 		memcpy(buf, byte_array->buffer + byte_array->head, len);
-		if(!isKeep){
+		if(!keeped){
 			byte_array->head = (byte_array->head + len) % byte_array->total;
 		}
 	} else {
@@ -83,29 +83,28 @@ bool Kgr_ByteArrayGetData(KgrByteArray *byte_array, char *buf, int len, bool isK
 		int rlen = len - llen;
 		memcpy(buf, byte_array->buffer + byte_array->head, llen);
 		memcpy(buf + llen, byte_array->buffer, rlen);
-		if(!isKeep){
+		if(!keeped){
 			byte_array->head = rlen;
 		}
 	}
 
-	if(!isKeep){
+	if(!keeped){
 		byte_array->size -= len;
 	}
 	return true;
 }
 
-int Kgr_ByteArrayGetLen(KgrByteArray *byte_array)
-{
-	if(byte_array == NULL)
-		return -1;
-	int length = byte_array->size;
-	return length;
-}
-
-void Kgr_ByteArrayReset(KgrByteArray *byte_array)
+void byte_array_clean(byte_array_t *byte_array)
 {
 	byte_array->size = 0;
 	byte_array->head = 0;
 	byte_array->tail = 0;
 }
 
+int byte_array_len(byte_array_t *byte_array)
+{
+    if (byte_array == nullptr)
+        return -1;
+    int length = byte_array->size;
+    return length;
+}
