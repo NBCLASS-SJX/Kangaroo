@@ -12,8 +12,6 @@
 #ifndef _SINGLETON_H_H_H
 #define _SINGLETON_H_H_H
 
-#include <>
-
 #include <mutex>
 
 template <typename T>

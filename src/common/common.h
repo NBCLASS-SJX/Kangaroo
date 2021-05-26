@@ -15,7 +15,7 @@
 #include <string>
 
 /** sleep millisecond */
-void msleep(uint8_t msec);
+void msleep(uint16_t msec);
 
 /** safe sprintf */
 int sprintf_safe(char *dest, int size, const char *fmt, ...);
@@ -50,5 +50,10 @@ void string_trim(std::string &msg, const char ch);
 /* string replace */
 void string_replace(std::string &msg, const char *src, const char *dst);
 
+/* create directory */
+void mkdir_directory(const char *directory);
+
+/* remove directory */
+void remove_directory(const char *directory);
 #endif
 

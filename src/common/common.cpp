@@ -12,6 +12,7 @@
 #include "common.h"
 #include <stdio.h>
 #include <time.h>
+#include <io.h>
 #include <stdarg.h>
 #include <iostream>
 #include <fstream>
@@ -22,13 +23,13 @@
 
 #if defined(__GNUC__)
 #include <unistd.h>
-const static char config_filename[] = "./application.conf";
+const static char config_filename[] = "./configure.ini";
 #elif defined(_MSC_VER)
 #include <windows.h>
-const static char config_filename[] = ".\\application.conf";
+const static char config_filename[] = ".\\configure.ini";
 #endif
 
-void msleep(uint8_t msec)
+void msleep(uint16_t msec)
 {
 #if defined(__GNUC__)
 	usleep(msec * 1000);
@@ -41,7 +42,11 @@ int sprintf_safe(char *dest, int size, const char *fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
-	int n = vsprintf(dest, fmt, args);
+#if defined(__GNUC__)
+    int n = vsprintf(dest, fmt, args);
+#elif defined(_MSC_VER)
+    int n = vsprintf_s(dest, size, fmt, args);
+#endif
 	va_end(args);
 	return n;
 }
@@ -178,3 +183,46 @@ void string_replace(std::string &msg, const char *src, const char *dst)
 	}
 }
 
+void mkdir_directory(const char *directory)
+{
+#if defined(__GNUC__)
+    DIR *dir = opendir(directory);
+    if (dir == nullptr) {
+        mkdir(directory, S_IRWXU);
+    } else {
+        closedir(dir);
+    }
+#elif defined(_MSC_VER)
+    if (_access(directory, 0) == -1) {
+        CreateDirectoryA(directory, NULL);
+    }
+#endif
+}
+
+void remove_directory(const char *directory)
+{
+#if defined(__GNUC__)
+
+#elif defined(_MSC_VER)
+    char tmp_filepath[2048] = { 0 };
+    sprintf_s(tmp_filepath, "%s\\*.*", directory);
+    WIN32_FIND_DATAA fileData;
+    HANDLE hFile = FindFirstFileA(tmp_filepath, &fileData);
+    if (hFile != INVALID_HANDLE_VALUE) {
+        do {
+            if (strcmp(".", fileData.cFileName) == 0 || strcmp("..", fileData.cFileName) == 0) {
+                continue;
+            } else if (fileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY) {
+                char filepath[2048] = { 0 };
+                sprintf_s(filepath, "%s\\%s", directory, fileData.cFileName);
+                remove_directory(directory);
+            } else {
+                char filepath[2048] = { 0 };
+                sprintf_s(filepath, "%s\\%s", directory, fileData.cFileName);
+                remove(filepath);
+            }
+        } while (FindNextFileA(hFile, &fileData));
+        RemoveDirectoryA(directory);
+    }
+#endif
+}
